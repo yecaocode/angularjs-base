@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html ng-app="tmodule">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="public/lib/angular/angular.min.js"></script>
+    <style>
+
+        .red{
+            background-color: red;
+        }
+
+        .green{
+            background-color: green;
+        }
+
+    </style>
+</head>
+<body ng-controller="testCtrl">
+    <div>
+        <button ng-click="select('')">全部</button>
+        <button ng-click="select('零食')">零食</button>
+        <button ng-click="select('饮料')">饮料</button>
+        <button ng-click="select('零食')">零食</button>
+    </div>
+    <h3>我的采购清单</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>产品编号</th>
+                <th>产品名称</th>
+                <th>产品价格</th>
+                <th>类型</th>
+                <th>数量</th>
+                <th>可见</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in listData">
+                <td>{{$index}}</td>
+                <td>{{item.id}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.type}}</td>
+                <td>{{item.count}}</td>
+                <td>
+                    <span style="width: 80px;height: 20px;display: inline-block" ng-class="{'red':!item.visible,'green':item.visible}"></span>
+                </td>
+                <td>
+                    <a style="padding: 5px 10px" ng-show="item.visible" ng-click="setVisible(item)">不可见</a>
+                    <a style="padding: 5px 10px" ng-show="!item.visible" ng-click="setVisible(item)">可见</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+<script>
+    var testModule=angular.module("tmodule",[]);
+
+    testModule.controller("testCtrl", function($scope){
+        console.log("controller is running......");
+
+        $scope.setVisible = function(item){
+
+            //发起HTTP请求
+            //当Success
+
+            item.visible = !item.visible;
+
+        };
+
+        $scope.select = function(where){
+            var selectData = [];
+
+            if(where && where.length > 0){
+                //发起Http请求
+                for(var i= 0,l=baseData.length;i<l;i++){
+                    var eachItem = baseData[i];
+
+                    if(eachItem.type == where){
+                        selectData.push(eachItem);
+                    }
+
+                }
+                //Success
+            }else{
+                selectData = baseData;
+            }
+
+            $scope.listData = selectData;
+        }
+
+        var baseData = [
+            {
+                id : 1,
+                name: "巧克力",
+                price: 12.34,
+                type: "零食",
+                count: 1,
+                visible: true
+            },{
+                id : 2,
+                name: "方便面",
+                price: 1,
+                type: "零食",
+                count: 1,
+                visible: false
+            },{
+                id : 3,
+                name: "酸奶",
+                price: 13,
+                type: "饮料",
+                count: 1,
+                visible: false
+            },{
+                id : 4,
+                name: "面包",
+                price: 3,
+                type: "食材",
+                count: 1,
+                visible: false
+            },{
+                id : 5,
+                name: "瓜子",
+                price: 8,
+                type: "零食",
+                count: 1,
+                visible: false
+            }
+        ];
+
+        //模拟数据
+        $scope.listData = baseData;
+
+
+    });
+
+</script>
+</html>

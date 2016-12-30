@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="public/lib/angular/angular.min.js"></script>
+    <script src="js/controllers.js"></script>
+</head>
+<body ng-app="myCart">
+    <div ng-controller="HelloController">
+        <input type="text" ng-model="greeting.text">
+
+        {{greeting.text}},World.
+    </div>
+    <hr />
+    <div  ng-controller="CartController">
+        <h3>Your Orders</h3>
+        <div ng-repeat="item in items">
+            <span>{{item.title}}</span>
+            <input ng-model="item.quantity" />
+            <span>{{item.price | currency}}</span>
+            <span>{{item.price * item.quantity | currency}}</span>
+            <button ng-click="remove($index)">Remove</button>
+        </div>
+    </div>
+    <hr />
+    <style>
+        .selected{
+            background-color: lightgreen;
+        }
+    </style>
+    <table ng-controller="restaurantTableController">
+        <tr ng-repeat="restaurant in directory" ng-click="selectRestaurant($index)" ng-class="{selected:$index==selectRowId}">
+            <td>{{restaurant.name}}</td>
+            <td>{{restaurant.cuisine}}</td>
+        </tr>
+    </table>
+</body>
+</html>

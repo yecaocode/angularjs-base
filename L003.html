@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="public/lib/angular/angular.min.js"></script>
+    <style>
+        .img-list{
+            list-style: none;
+        }
+
+        .img-list li{
+            float: left;
+            margin: 10px;
+            border: 1px pink solid;
+            width: 100px;
+            height: 100px;
+        }
+
+        .img-list li img{
+            width: 100px;
+            height: 100px;
+        }
+
+        .img-list .img-btn{
+            text-align: center;
+            line-height: 100px;
+            font-size: 100px;
+            color: #ccc;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .img-list .img-btn input{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        .img-list .img-btn-del{
+            text-align: center;
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body ng-app="tmodule">
+
+    <h3>多图上传</h3>
+    <div ng-controller="testCtrl">
+        <ul class="img-list">
+            <li ng-repeat="img in imageList">
+                <div ng-show="img.url != null">
+                    <img id="img.id" ng-src="{{img.url}}">
+                    <div class="img-btn-del">
+                        <a href="javascript:{}" ng-click="delImg(img)">删除</a>
+                    </div>
+                </div>
+                <div ng-show="img.url == null">
+                    点击上传
+                </div>
+            </li>
+            <li class="img-btn">
+                <input type="file" onchange="angular.element(this).scope().addImg()">
+                <!-- <input type="file" ng-file-select="addImg()"> -->
+                +
+            </li>
+        </ul>
+        <div style="clear: both">
+            <button ng-click="getAllImg()">获取所有</button>
+        </div>
+    </div>
+
+<script>
+    var testModule=angular.module("tmodule",[]);
+
+    testModule.controller("testCtrl", function($scope) {
+        console.log("controller is running......");
+
+        //定义图片属性
+//    var MyImage = function(){
+//        this.name = "";
+//    }
+
+        //定义图片列表
+        $scope.imageList = [
+        ];
+
+        $scope.addImg = function(){
+            console.log("改变");
+            //调用上传组件，获取上传完成后的url
+            $scope.imageList.push({id: (+ new Date),url:"img/"+$scope.imageList.length+".jpg"});
+            $scope.$apply();
+        }
+
+        $scope.delImg = function(img){
+            console.log("删除："+img.id);
+
+            for(var i= 0, l=$scope.imageList.length; i < l; i++){
+
+                var imageItem = $scope.imageList[i];
+
+                //判断id是否等于要删除的元素id
+                if(imageItem.id == img.id){
+                    console.log("匹配到...");
+                    $scope.imageList.splice(i,1);
+                    break;
+                }
+
+            }
+        }
+
+        $scope.getAllImg = function(){
+            var urls = "";
+            for(var i= 0, l=$scope.imageList.length; i < l; i++) {
+                var imageItem = $scope.imageList[i];
+
+                if(i < l-1){
+                    urls+=imageItem.url+",";
+                }else{
+                    urls+=imageItem.url
+                }
+
+            }
+            //循环结束，输出结果
+            console.log(urls);
+        }
+
+    });
+</script>
+</body>
+</html>
