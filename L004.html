@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="public/lib/angular/angular.min.js"></script>
+</head>
+<body ng-app="tmodule">
+
+    <h3>指令与Controller的数据交互</h3>
+    <div ng-controller="testCtrl" style="border: 2px green solid;height: 940px;padding: 20px;">
+        <span>
+            页面空间，处于contrller内部，也是controller中$scope的作用域，在页面可以调用$scope中定义的内容。
+        </span>
+        <div>
+            页面空间：{{ctrlParamA}}
+            <div>
+                <button ng-click="textReset_click()">我是页面按钮，点击变回来！</button>
+            </div>
+        </div>
+
+        <span>
+            指令A：元素方式使用指令，通过指定参数parama将当前的Controler.$scope.ctrlParamA传递给指令的$scope中，这样将会在指令的$scope和html中直接使用。通过textreset可以将controller中的textReset_click()方法同样的传递给指令使用。
+        </span>
+        <dire parama="ctrlParamA" textreset="textReset_click()"></dire>
+
+        <span>
+            指令B：同上，但是只传递了当前Controller中的ctrlParamA，那么在这个指令的范围中，将无法使用页面Controller的textReset_click()函数
+        </span>
+        <dire parama="ctrlParamA"></dire>
+
+        <span>
+            指令C：属性使用指令，不传递参数，将无法和页面Controller交互
+        </span>
+        <div dire style="border:2px #000 solid;padding: 5px;">我是页面中元素</div>
+    </div>
+<script>
+    var testModule=angular.module("tmodule",[]);
+
+    testModule.controller("testCtrl", function($scope) {
+        console.log("controller is running......");
+
+        //在controller中定义方法
+        $scope.ctrlParamA = "我来自Controller";
+
+        $scope.textReset_click = function(){
+            $scope.ctrlParamA = "我来自Controller";
+        }
+
+    }).directive("dire",function(){
+        return {
+            restrict: 'EA',
+            scope:{
+                //如果设置scope则为独立的scope域
+                parama: '=',
+                textreset: '&'
+            },
+            controller:function($scope){
+                $scope.parama1 = "我来自指令内部";
+
+                $scope.changeText_click = function(){
+                      $scope.parama = "点我好疼！";
+                };
+            },
+            template:'<div style="border: 2px red solid; width:200px; height:200px; margin: 30px;padding: 3px;text-align: center">\
+                        <div style="">ctrl:{{parama}}</div>\
+                        <div style="">指令:{{parama1}}</div>\
+                        <button ng-click="changeText_click()">点我改变ctrl字</button>\
+                        <button ng-click="textreset()">我可以调用ctrl重置哦</button>\
+                      </div>',
+            link: function (scope, element, attrs) {
+
+            }
+        }
+    });
+</script>
+</body>
+</html>
