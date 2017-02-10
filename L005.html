@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="public/lib/angular/angular.min.js"></script>
+
+    <style>
+        .form-panel{
+            margin: 20px;;
+        }
+
+        .form_item{
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .form_item > div,
+        .form_item > label {
+            display: inline-block;;
+        }
+
+        .form_label{
+            width: 200px;
+            text-align: right;
+        }
+
+        .form_input{
+        }
+
+        .success{
+            color: green;
+        }
+
+        .error{
+            color: red;
+        }
+
+    </style>
+
+</head>
+<body ng-app="tmodule">
+    <div class="form-panel" ng-controller="testCtrl">
+        <form name="youname_form" novalidate>
+            <div class="form_item">
+                <label class="form_label ">其他必填设置：</label>
+                <div class="form_input">
+                    <input type="text" name="other_val" ng-model="configData.otherVal" required>
+                </div>
+                <div class="form_message">
+                    <span class="success" ng-show="youname_form.other_val.$dirty && youname_form.other_val.$valid"><i class="tongtech tbcl-duihao">成功</i></span>
+                    <span class="error" ng-show="youname_form.other_val.$dirty && youname_form.other_val.$error.required">请填写其他设置</span>
+                </div>
+            </div>
+            <div class="form_item">
+                <label class="form_label ">邮件配置：</label>
+                <div class="form_input">
+                    <input type="checkbox" ng-model="configData.mailServer.enable">
+                </div>
+                <div class="form_message">
+                    <span class="prompt"></span>
+                </div>
+            </div>
+            <div ng-show="configData.mailServer.enable">
+                <div class="form_item">
+                    <label class="form_label ">STMP服务地址：</label>
+                    <div class="form_input">
+                        <input type="text" name="mailServer_smtp" ng-model="configData.mailServer.smtp" required-for="configData.mailServer.enable">
+                    </div>
+                    <div class="form_message">
+                        <span class="success" ng-show="youname_form.mailServer_smtp.$dirty && youname_form.mailServer_smtp.$valid"><i class="tongtech tbcl-duihao">成功</i></span>
+                        <span class="error" ng-show="youname_form.mailServer_smtp.$dirty && youname_form.mailServer_smtp.$error.required">请填写STMP服务地址</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form_item">
+                <button ng-click="saveConfig(youname_form.$valid)">保存配置</button>
+                <span>表单验证状态：{{youname_form.$valid}}</span>
+            </div>
+        </form>
+    </div>
+<script>
+    'use strict'
+    var testModule=angular.module("tmodule",[]);
+    testModule.controller("testCtrl", function($scope) {
+        $scope.configData = {
+            otherVal: '',
+            mailServer: {
+                enable: false,
+                smtp: ''
+            }
+        }
+
+        var editVali = function(item){
+            item.$dirty = true;
+            item.$pristine = false;
+        }
+
+        $scope.saveConfig = function(state){
+            //表单校验
+            if(!state) {
+                console.log($scope.youname_form.other_val);
+                editVali($scope.youname_form.other_val);
+                if($scope.configData.mailServer.enable){
+                    editVali($scope.youname_form.mailServer_smtp);
+                }
+                return;
+            }
+            alert('验证成功！');
+        }
+
+    });
+
+    testModule.directive('requiredFor',function(){
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function(scope, ele, attrs, ctrl){
+                if (!ctrl) return;
+                console.log(ctrl);
+                var paramVal = null;
+                scope.$watch(attrs.requiredFor, function(n){
+                    paramVal = n;
+                    ctrl.$validate();
+                });
+
+                ctrl.$validators.required = function(modelValue, viewValue) {
+                    return !paramVal || !ctrl.$isEmpty(viewValue);
+                };
+
+                ctrl.$parsers.push(function(viewValue){
+                    if(paramVal){
+                        if(ctrl.$isEmpty(viewValue)){
+                            ctrl.$setValidity('required', false);
+                        }else{
+                            ctrl.$setValidity('required', true);
+                        }
+                    }else{
+                        ctrl.$setValidity('required', true);
+                    }
+                    return viewValue;
+                });
+            }
+        };
+    });
+
+</script>
+</body>
+</html>
